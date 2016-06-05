@@ -21,6 +21,14 @@
 # Microsoft.PowerShellISE_profile.ps1
 
 ##
+# Useful functions
+Function Start-ElevatedPowerShell
+{
+	Start-Process powershell -Verb Runas 
+}
+Set-Alias -Name sudo -Value Start-ElevatedPowerShell
+
+##
 # Add the ability to administer VMWare ESXi hosts
 $snapinName = "VMware.VimAutomation.Core"
 Add-PSSnapin $snapinName -ErrorAction SilentlyContinue
@@ -32,27 +40,31 @@ if ((Get-PSSnapin -Name $snapinName -ErrorAction SilentlyContinue) -eq $null)
 ##
 # Load posh-git module, set the prompt and start the ssh agent
 # https://github.com/dahlbyk/posh-git
-Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
-Import-Module posh-git
-
-# Configure the prompt
-Function Prompt
+if (-not (Get-Module -ListAvailable -Name "Posh-Git")) 
 {
-    $realLASTEXITCODE = $LASTEXITCODE
-    Write-Host("[" + $env:USERNAME + "@" + $env:COMPUTERNAME + "] ") -nonewline
-    Write-Host($PWD) -nonewline
-    Write-VcsStatus
-    $global:LASTEXITCODE = $realLASTEXITCODE
-
-    return "`n> "
+	Write-Warning "Posh-Git is not installed, trying to install now."
+	Start-Process powershell -Verb runas -Wait -ArgumentList "-NoProfile -Command & {Install-Module Posh-Git}"
 }
-Pop-Location
-Start-SshAgent -Quiet
 
+if (Get-Module -ListAvailable -Name "posh-git")
+{
+	Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
+	Import-Module posh-git
 
-##
-# Add elevated powershell function and alias to sudo
-Import-Module pssudo
+	# Configure the prompt
+	Function Prompt
+	{
+    		$realLASTEXITCODE = $LASTEXITCODE
+    		Write-Host("[" + $env:USERNAME + "@" + $env:COMPUTERNAME + "] ") -nonewline
+    		Write-Host($PWD) -nonewline
+    		Write-VcsStatus
+		$global:LASTEXITCODE = $realLASTEXITCODE
+
+    		return "`n> "
+	}
+	Pop-Location
+	Start-SshAgent -Quiet
+}
 
 ##
 # Change to home directory
