@@ -49,7 +49,7 @@ if ((Get-PSSnapin -Name $snapinName -ErrorAction SilentlyContinue) -eq $null)
 if (-not (Get-Module -ListAvailable -Name "Posh-Git")) 
 {
 	Write-Warning "Posh-Git is not installed, trying to install now."
-	Start-Process powershell -Verb runas -Wait -ArgumentList "-NoProfile -Command & {Install-Module Posh-Git}"
+	sudo powershell -Wait -ArgumentList "-NoProfile -Command & {Install-Module Posh-Git}"
 }
 
 if (Get-Module -ListAvailable -Name "posh-git")
