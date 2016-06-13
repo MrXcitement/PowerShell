@@ -22,11 +22,17 @@
 
 ##
 # Useful functions
-Function Start-ElevatedPowerShell
+
+Function Elevate-Process
 {
-	Start-Process powershell -Verb Runas 
+	$file, [string]$arguments = $args
+	$psi = new-object System.Diagnostics.ProcessStartInfo $file
+	$psi.Arguments = $arguments;
+	$psi.Verb = "runas"
+	$psi.WorkingDirectory = Get-Location
+	[System.Diagnostics.Process]::Start($psi)
 }
-Set-Alias -Name sudo -Value Start-ElevatedPowerShell
+Set-Alias sudo Elevate-Process
 
 ##
 # Add the ability to administer VMWare ESXi hosts
