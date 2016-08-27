@@ -34,6 +34,12 @@ Function Elevate-Process
 }
 Set-Alias sudo Elevate-Process
 
+Function Test-Administrator 
+{
+    $user = [Security.Principal.WindowsIdentity]::GetCurrent();
+    (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+}
+
 ##
 # Add the ability to administer VMWare ESXi hosts
 $snapinName = "VMware.VimAutomation.Core"
@@ -59,22 +65,33 @@ if (Get-Command "git.exe" -ErrorAction SilentlyContinue)
 		Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
 		Import-Module posh-git
 
-		# Configure the prompt
-		Function Prompt
-		{
-			$realLASTEXITCODE = $LASTEXITCODE
-			Write-Host("[" + $env:USERNAME + "@" + $env:COMPUTERNAME + "] ") -nonewline
-			Write-Host($PWD) -nonewline
-			Write-VcsStatus
-			$global:LASTEXITCODE = $realLASTEXITCODE
-
-			return "`n> "
-		}
 		Pop-Location
 		$env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\usr\bin"
 		Start-SshAgent -Quiet
 	}
 }
+
+
+##
+# Configure the prompt
+Function Prompt
+{
+	$realLASTEXITCODE = $LASTEXITCODE
+	
+	Write-Host("[") -noNewLine -ForegroundColor White
+	Write-Host($env:USERNAME) -noNewLine -ForegroundColor Cyan
+	Write-Host("@") -noNewLine -ForegroundColor White
+	Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor Cyan
+	If (Test-Administrator) { Write-Host "-ELEVATED" -noNewLine -ForegroundColor Red}
+	Write-Host("] ") -nonewline -ForegroundColor White
+	Write-Host($PWD) -nonewline -ForegroundColor Yellow
+	If (Get-Module posh-git) { Write-VcsStatus }
+	Write-Host("")
+
+	$global:LASTEXITCODE = $realLASTEXITCODE
+	return "> "
+}
+
 ##
 # Change to home directory
-cd ~
+#cd ~
