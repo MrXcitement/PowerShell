@@ -78,19 +78,22 @@ Function Prompt
 {
 	$realLASTEXITCODE = $LASTEXITCODE
 	
-	Write-Host("[") -noNewLine -ForegroundColor White
 	Write-Host($env:USERNAME) -noNewLine -ForegroundColor Cyan
 	Write-Host("@") -noNewLine -ForegroundColor White
 	Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor Cyan
-	If (Test-Administrator) { Write-Host "-ELEVATED" -noNewLine -ForegroundColor Red}
-	Write-Host("] ") -nonewline -ForegroundColor White
+	If (Test-Administrator) { Write-Host " is *ELEVATED*" -noNewLine -ForegroundColor Red}
+
+	Write-Host(" at ") -nonewline -ForegroundColor White
 	Write-Host($PWD) -nonewline -ForegroundColor Yellow
+
 	If (Get-Module posh-git) { Write-VcsStatus }
 	Write-Host("")
 
 	$global:LASTEXITCODE = $realLASTEXITCODE
 	return "> "
 }
+
+
 
 ##
 # Change to home directory
