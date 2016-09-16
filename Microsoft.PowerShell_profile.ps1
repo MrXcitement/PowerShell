@@ -8,12 +8,6 @@
 # If you have commands that should run when starting both the console or the ISE shell, but them in profile.ps1
 # If you have commands that should run only in the ISE shell, put them in Microsoft.PowerShellISE_profile.ps1
 
-if ($host.UI.RawUI.WindowTitle -match "Administrator")
-{
-#	$host.UI.RawUI.BackgroundColor = "DarkRed"
-#	$Host.UI.RawUI.ForegroundColor = "White"
-#	cls
-}
 
 # Chocolatey profile
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
