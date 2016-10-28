@@ -108,4 +108,4 @@ Function Prompt
 
 ##
 # Change to home directory
-#cd ~
+cd ~
