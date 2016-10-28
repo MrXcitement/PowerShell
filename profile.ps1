@@ -77,14 +77,25 @@ if (Get-Command "git.exe" -ErrorAction SilentlyContinue)
 Function Prompt
 {
 	$realLASTEXITCODE = $LASTEXITCODE
-	
-	Write-Host($env:USERNAME) -noNewLine -ForegroundColor Cyan
-	Write-Host("@") -noNewLine -ForegroundColor White
-	Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor Cyan
-	If (Test-Administrator) { Write-Host " is *ELEVATED*" -noNewLine -ForegroundColor Red}
+    $currBackgroundColor = (get-host).ui.rawui.BackgroundColor
 
-	Write-Host(" at ") -nonewline -ForegroundColor White
-	Write-Host($PWD) -nonewline -ForegroundColor Yellow
+    $userForegroundColor='Cyan'
+    $hostForegroundColor='Cyan'
+    $pathForegroundColor='Yellow'
+
+	If (Test-Administrator) {
+        $userForegroundColor='Yellow'
+        $hostForegroundColor='Yellow' 
+        (get-host).ui.rawui.BackgroundColor = 'Red'
+    }
+    Write-Host($env:USERNAME) -noNewLine -ForegroundColor $userForegroundColor
+	Write-Host("@") -noNewLine -ForegroundColor White
+	Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor $hostForegroundColor
+	Write-Host(" in ") -nonewline -ForegroundColor White
+	Write-Host($PWD) -nonewline -ForegroundColor $pathForegroundColor
+	If (Test-Administrator) {
+        (get-host).ui.rawui.BackgroundColor = $currBackgroundColor
+    }
 
 	If (Get-Module posh-git) { Write-VcsStatus }
 	Write-Host("")
