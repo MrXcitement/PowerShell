@@ -57,7 +57,7 @@ if (Get-Command "git.exe" -ErrorAction SilentlyContinue)
 	if (-not (Get-Module -ListAvailable -Name "Posh-Git")) 
 	{
 		Write-Warning "Posh-Git is not installed, trying to install now."
-		sudo powershell -Wait -ArgumentList "-NoProfile -Command & {Install-Module Posh-Git}"
+		sudo powershell -NoProfile -Command {Install-Module Posh-Git}
 	}
 
 	if (Get-Module -ListAvailable -Name "posh-git")
