@@ -92,7 +92,7 @@ Function Prompt
 	Write-Host("@") -noNewLine -ForegroundColor White
 	Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor $hostForegroundColor
 	Write-Host(" in ") -nonewline -ForegroundColor White
-	Write-Host($PWD) -nonewline -ForegroundColor $pathForegroundColor
+	Write-Host(Convert-Path($PWD)) -nonewline -ForegroundColor $pathForegroundColor
 	If (Test-Administrator) {
         (get-host).ui.rawui.BackgroundColor = $currBackgroundColor
     }
