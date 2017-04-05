@@ -42,12 +42,12 @@ Function Test-Administrator
 
 ##
 # Add the ability to administer VMWare ESXi hosts
-$snapinName = "VMware.VimAutomation.Core"
-Add-PSSnapin $snapinName -ErrorAction SilentlyContinue
-if ((Get-PSSnapin -Name $snapinName -ErrorAction SilentlyContinue) -eq $null)
-{
-	Write-Warning "VMware SnapIn is not installed and has not been added to this session."
-}
+#$snapinName = "VMware.VimAutomation.Core"
+#Add-PSSnapin $snapinName -ErrorAction SilentlyContinue
+#if ((Get-PSSnapin -Name $snapinName -ErrorAction SilentlyContinue) -eq $null)
+#{
+#	Write-Warning "VMware SnapIn is not installed and has not been added to this session."
+#}
 
 ##
 # Load posh-git module, set the prompt and start the ssh agent
@@ -65,9 +65,9 @@ if (Get-Command "git.exe" -ErrorAction SilentlyContinue)
 		Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
 		Import-Module posh-git
 
-		Pop-Location
-		$env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\usr\bin"
-		Start-SshAgent -Quiet
+#		Pop-Location
+#		$env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\usr\bin"
+#		Start-SshAgent -Quiet
 	}
 }
 
@@ -84,9 +84,9 @@ Function Prompt
     $pathForegroundColor='Yellow'
 
 	If (Test-Administrator) {
-        $userForegroundColor='Yellow'
-        $hostForegroundColor='Yellow' 
-        (get-host).ui.rawui.BackgroundColor = 'Red'
+        $userForegroundColor='Red'
+        $hostForegroundColor='Red' 
+        #(get-host).ui.rawui.BackgroundColor = 'Red'
     }
     Write-Host($env:USERNAME) -noNewLine -ForegroundColor $userForegroundColor
 	Write-Host("@") -noNewLine -ForegroundColor White
@@ -94,7 +94,7 @@ Function Prompt
 	Write-Host(" in ") -nonewline -ForegroundColor White
 	Write-Host(Convert-Path($PWD)) -nonewline -ForegroundColor $pathForegroundColor
 	If (Test-Administrator) {
-        (get-host).ui.rawui.BackgroundColor = $currBackgroundColor
+        #(get-host).ui.rawui.BackgroundColor = $currBackgroundColor
     }
 
 	If (Get-Module posh-git) { Write-VcsStatus }
@@ -103,8 +103,6 @@ Function Prompt
 	$global:LASTEXITCODE = $realLASTEXITCODE
 	return "> "
 }
-
-
 
 ##
 # Change to home directory
