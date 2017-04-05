@@ -64,8 +64,7 @@ if (Get-Command "git.exe" -ErrorAction SilentlyContinue)
 	{
 		Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
 		Import-Module posh-git
-
-#		Pop-Location
+		Pop-Location
 #		$env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\usr\bin"
 #		Start-SshAgent -Quiet
 	}
@@ -77,7 +76,6 @@ if (Get-Command "git.exe" -ErrorAction SilentlyContinue)
 Function Prompt
 {
 	$realLASTEXITCODE = $LASTEXITCODE
-    $currBackgroundColor = (get-host).ui.rawui.BackgroundColor
 
     $userForegroundColor='Cyan'
     $hostForegroundColor='Cyan'
@@ -86,16 +84,12 @@ Function Prompt
 	If (Test-Administrator) {
         $userForegroundColor='Red'
         $hostForegroundColor='Red' 
-        #(get-host).ui.rawui.BackgroundColor = 'Red'
     }
     Write-Host($env:USERNAME) -noNewLine -ForegroundColor $userForegroundColor
 	Write-Host("@") -noNewLine -ForegroundColor White
 	Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor $hostForegroundColor
 	Write-Host(" in ") -nonewline -ForegroundColor White
 	Write-Host(Convert-Path($PWD)) -nonewline -ForegroundColor $pathForegroundColor
-	If (Test-Administrator) {
-        #(get-host).ui.rawui.BackgroundColor = $currBackgroundColor
-    }
 
 	If (Get-Module posh-git) { Write-VcsStatus }
 	Write-Host("")
