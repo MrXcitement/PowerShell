@@ -22,54 +22,80 @@
 
 ##
 # Useful functions
-
-Function Elevate-Process
-{
-	$file, [string]$arguments = $args
-	$psi = new-object System.Diagnostics.ProcessStartInfo $file
-	$psi.Arguments = $arguments;
-	$psi.Verb = "runas"
-	$psi.WorkingDirectory = Get-Location
-	[System.Diagnostics.Process]::Start($psi)
-}
-Set-Alias sudo Elevate-Process
-
 Function Test-Administrator 
 {
     $user = [Security.Principal.WindowsIdentity]::GetCurrent();
     (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
 }
 
-##
-# Add the ability to administer VMWare ESXi hosts
-#$snapinName = "VMware.VimAutomation.Core"
-#Add-PSSnapin $snapinName -ErrorAction SilentlyContinue
-#if ((Get-PSSnapin -Name $snapinName -ErrorAction SilentlyContinue) -eq $null)
-#{
-#	Write-Warning "VMware SnapIn is not installed and has not been added to this session."
-#}
-
-##
-# Load posh-git module, set the prompt and start the ssh agent
-# https://github.com/dahlbyk/posh-git
-if (Get-Command "git.exe" -ErrorAction SilentlyContinue)
-{
-	if (-not (Get-Module -ListAvailable -Name "Posh-Git")) 
-	{
-		Write-Warning "Posh-Git is not installed, trying to install now."
-		sudo powershell -NoProfile -Command {Install-Module Posh-Git}
-	}
-
-	if (Get-Module -ListAvailable -Name "posh-git")
-	{
-		Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
-		Import-Module posh-git
-		Pop-Location
-#		$env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\usr\bin"
-#		Start-SshAgent -Quiet
-	}
+if (Test-Administrator) {
+    (get-host).ui.rawui.BackgroundColor = 'Black'
+    clear
 }
 
+##
+# Install modules and import those that need to be
+$modules = @{
+    'pscx'       = @{'import'=$False; 'install_params'=@{'-AllowClobber'=$True}; 'import_params'=@{}}
+    'posh-git'   = @{'import'=$False; 'install_params'=@{}; 'import_params'=@{}}
+    'PSSudo'     = @{'import'=$False; 'install_params'=@{}; 'import_params'=@{}}
+    'PSReadline' = @{'import'=$True;  'install_params'=@{}; 'import_params'=@{}}
+}
+ForEach ($module in $modules.GetEnumerator())
+{
+    $name = $module.Name
+    $import = $module.Value['import']
+    $install_params = $module.Value['install_params']
+    $import_params = $module.Value['import_params']
+
+    if (!(Get-Module -ListAvailable -Name $name))
+    {
+        Write-Warning "Module $name is not installed"
+        if (!(Test-Administrator))
+        {
+            Write-Warning "You must run this script elevated to install module $name" 
+            continue
+        }
+        if (!(Find-Module $name))
+        {
+            Write-Warning "Unable to find module $name"
+        }
+        else
+        {
+            Write-Output "Installing module $name"
+            Install-Module $name @install_params
+        }
+    } 
+    if ($import -And !(Get-Module -Name $name))
+    {
+        Write-Output "Importing module $name"
+        Import-Module $name @import_params
+    }
+}
+
+
+##
+# Add the ability to administer VMWare ESXi hosts
+# $snapinName = "VMware.VimAutomation.Core"
+# Add-PSSnapin $snapinName -ErrorAction SilentlyContinue
+# if ((Get-PSSnapin -Name $snapinName -ErrorAction SilentlyContinue) -eq $null)
+# {
+# 	Write-Warning "VMware SnapIn is not installed and has not been added to this session."
+# }
+
+##
+# Load posh-git module and start the ssh agent
+# https://github.com/dahlbyk/posh-git
+if ((Get-Command "git.exe" -ErrorAction SilentlyContinue) -And 
+    (Get-Module -ListAvailable -Name "posh-git"))
+{
+    Write-Output "Import module posh-git"
+    Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
+    Import-Module posh-git
+    Pop-Location
+    # $env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\usr\bin"
+    Start-SshAgent -Quiet
+}
 
 ##
 # Configure the prompt
