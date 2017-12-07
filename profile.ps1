@@ -28,10 +28,10 @@ Function Test-Administrator
     (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
 }
 
-if (Test-Administrator) {
-    (get-host).ui.rawui.BackgroundColor = 'Black'
-    clear
-}
+# if (Test-Administrator) {
+#     (get-host).ui.rawui.BackgroundColor = 'Black'
+#     clear
+# }
 
 ##
 # Install modules and import those that need to be
@@ -101,27 +101,30 @@ if ((Get-Command "git.exe" -ErrorAction SilentlyContinue) -And
 # Configure the prompt
 Function Prompt
 {
-	$realLASTEXITCODE = $LASTEXITCODE
+    $realLASTEXITCODE = $LASTEXITCODE
 
     $userForegroundColor='Cyan'
     $hostForegroundColor='Cyan'
     $pathForegroundColor='Yellow'
 
-	If (Test-Administrator) {
+    if (Test-Administrator) 
+    {
         $userForegroundColor='Red'
         $hostForegroundColor='Red' 
     }
     Write-Host($env:USERNAME) -noNewLine -ForegroundColor $userForegroundColor
-	Write-Host("@") -noNewLine -ForegroundColor White
-	Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor $hostForegroundColor
-	Write-Host(" in ") -nonewline -ForegroundColor White
-	Write-Host(Convert-Path($PWD)) -nonewline -ForegroundColor $pathForegroundColor
+    Write-Host("@") -noNewLine -ForegroundColor White
+    Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor $hostForegroundColor
+    Write-Host(" in ") -nonewline -ForegroundColor White
+    Write-Host(Convert-Path($PWD)) -nonewline -ForegroundColor $pathForegroundColor
 
-	If (Get-Module posh-git) { Write-VcsStatus }
-	Write-Host("")
-
-	$global:LASTEXITCODE = $realLASTEXITCODE
-	return "> "
+    if (Get-Module posh-git) 
+    { 
+        Write-VcsStatus 
+    }
+    Write-Host("")
+    $global:LASTEXITCODE = $realLASTEXITCODE
+    return "> "
 }
 
 ##
