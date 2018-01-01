@@ -22,10 +22,12 @@
 
 ##
 # Useful functions
-Function Test-Administrator 
+Function IsAdministrator 
 {
     $user = [Security.Principal.WindowsIdentity]::GetCurrent();
-    (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+    $user_principal = New-Object Security.Principal.WindowsPrincipal $user
+    $role_admin = [Security.Principal.WindowsBuiltinRole]::Administrator
+    $user_principal.IsInRole($role_admin)
 }
 
 ##
@@ -71,7 +73,7 @@ ForEach ($module in $modules.GetEnumerator())
     if (!(Get-Module -ListAvailable -Name $name))
     {
         Write-Warning "Module $name is not installed"
-        if (($install_params['-Scope'] -eq 'CurrentUser') -And !(Test-Administrator))
+        if (($install_params['-Scope'] -eq 'CurrentUser') -And !(IsAdministrator))
         {
             Write-Warning "You must run this script elevated to install module $name" 
             continue
@@ -127,7 +129,7 @@ Function Prompt
     $hostForegroundColor='Cyan'
     $pathForegroundColor='Yellow'
 
-    if (Test-Administrator) 
+    if (IsAdministrator) 
     {
         $userForegroundColor='Red'
         $hostForegroundColor='Red' 
