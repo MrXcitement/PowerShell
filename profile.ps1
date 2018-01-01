@@ -28,19 +28,39 @@ Function Test-Administrator
     (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
 }
 
-# if (Test-Administrator) {
-#     (get-host).ui.rawui.BackgroundColor = 'Black'
-#     clear
-# }
-
 ##
 # Install modules and import those that need to be
 $modules = @{
-    'pscx'       = @{'import'=$False; 'install_params'=@{'-AllowClobber'=$True}; 'import_params'=@{}}
-    'posh-git'   = @{'import'=$False; 'install_params'=@{}; 'import_params'=@{}}
-    'PSSudo'     = @{'import'=$False; 'install_params'=@{}; 'import_params'=@{}}
-    'PSReadline' = @{'import'=$True;  'install_params'=@{}; 'import_params'=@{}}
+    # Powershell Community Extensions
+    # https://github.com/Pscx/Pscx
+    'Pscx' = @{'import'=$False;
+               'import_params'=@{};
+               'install_params'=@{'-Scope'='CurrentUser';
+                                  '-AllowClobber'=$True}}
+    # PSReadLine (Note: now included with PowerShell 5+)
+    # https://github.com/lzybkr/PSReadLine
+    'PSReadline' = @{'import'=$True;
+                     'import_params'=@{};
+                     'install_params'=@{'-Scope'='CurrentUser'}}
+    # PSSudo
+    # https://github.com/ecsousa/PSSudo
+    'PSSudo' = @{'import'=$False;
+                 'import_params'=@{};
+                 'install_params'=@{'-Scope'='CurrentUser'}}
+    # Posh-Git
+    # https://github.com/dahlbyk/posh-git
+    'Posh-Git' = @{'import'=$False;
+                   'import_params'=@{};
+                   'install_params'=@{'-Scope'='CurrentUser';
+                                      '-AllowClobber'=$True}}
+    # VMware.PowerClI
+    # https://blogs.vmware.com/powercli/
+    'VMware.PowerCLI' = @{'import'=$False;
+                          'import_params' = @{};
+                          'install_params' = @{'-Scope'='CurrentUser';}}
 }
+
+# Install/Import the modules defined above
 ForEach ($module in $modules.GetEnumerator())
 {
     $name = $module.Name
@@ -51,7 +71,7 @@ ForEach ($module in $modules.GetEnumerator())
     if (!(Get-Module -ListAvailable -Name $name))
     {
         Write-Warning "Module $name is not installed"
-        if (!(Test-Administrator))
+        if (($install_params['-Scope'] -eq 'CurrentUser') -And !(Test-Administrator))
         {
             Write-Warning "You must run this script elevated to install module $name" 
             continue
