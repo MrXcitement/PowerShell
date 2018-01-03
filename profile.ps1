@@ -37,31 +37,36 @@ Function Test-IsAdministrator
 $modules = @{
     # Powershell Community Extensions
     # https://github.com/Pscx/Pscx
-    'Pscx' = @{'import'=$False;
-               'import_params'=@{};
-               'install_params'=@{'-Scope'='CurrentUser';
-                                  '-AllowClobber'=$True}}
+    'Pscx' = @{'import' = $False
+               'import_params' = @{}
+               'install_params' = @{'-Scope'='CurrentUser'
+                                    '-AllowClobber'=$True}}
+    # VSSetup
+    # https://www.powershellgallery.com/packages/VSSetup/2.0.1.32208
+    'VSSetup' = @{'import' = $false
+                  'import_params' = @{}
+                  'install_params' = @{'-Scope' = 'CurrentUser'}}
     # PSReadLine (Note: now included with PowerShell 5+)
     # https://github.com/lzybkr/PSReadLine
-    'PSReadline' = @{'import'=$True;
-                     'import_params'=@{};
-                     'install_params'=@{'-Scope'='CurrentUser'}}
+    'PSReadline' = @{'import' = $True
+                     'import_params' = @{}
+                     'install_params' = @{'-Scope' = 'CurrentUser'}}
     # PSSudo
     # https://github.com/ecsousa/PSSudo
-    'PSSudo' = @{'import'=$False;
-                 'import_params'=@{};
-                 'install_params'=@{'-Scope'='CurrentUser'}}
+    'PSSudo'  =  @{'import' = $False
+                   'import_params' = @{}
+                   'install_params' = @{'-Scope' = 'CurrentUser'}}
     # Posh-Git
     # https://github.com/dahlbyk/posh-git
-    'Posh-Git' = @{'import'=$False;
-                   'import_params'=@{};
-                   'install_params'=@{'-Scope'='CurrentUser';
-                                      '-AllowClobber'=$True}}
+    'Posh-Git' = @{'import' = $False
+                   'import_params' = @{}
+                   'install_params' = @{'-Scope'='CurrentUser'
+                                        '-AllowClobber'=$True}}
     # VMware.PowerClI
     # https://blogs.vmware.com/powercli/
-    'VMware.PowerCLI' = @{'import'=$False;
-                          'import_params' = @{};
-                          'install_params' = @{'-Scope'='CurrentUser';}}
+    'VMware.PowerCLI' = @{'import'=$False
+                          'import_params' = @{}
+                          'install_params' = @{'-Scope'='CurrentUser'}}
 }
 
 # Install/Import the modules defined above
@@ -75,7 +80,7 @@ ForEach ($module in $modules.GetEnumerator())
     if (!(Get-Module -ListAvailable -Name $name))
     {
         Write-Warning "Module $name is not installed"
-        if (($install_params['-Scope'] -eq 'CurrentUser') -And 
+        if (!($install_params['-Scope'] -eq 'CurrentUser') -And 
             !(Test-IsAdministrator))
         {
             Write-Warning "You must run this script elevated to install module $name" 
