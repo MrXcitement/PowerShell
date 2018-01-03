@@ -20,15 +20,17 @@
 # Default ISE powershell profile.
 # Microsoft.PowerShellISE_profile.ps1
 
+
 ##
 # Useful functions
-Function IsAdministrator 
+Function Test-IsAdministrator 
 {
     $user = [Security.Principal.WindowsIdentity]::GetCurrent();
     $user_principal = New-Object Security.Principal.WindowsPrincipal $user
     $role_admin = [Security.Principal.WindowsBuiltinRole]::Administrator
     $user_principal.IsInRole($role_admin)
 }
+
 
 ##
 # Install modules and import those that need to be
@@ -73,7 +75,8 @@ ForEach ($module in $modules.GetEnumerator())
     if (!(Get-Module -ListAvailable -Name $name))
     {
         Write-Warning "Module $name is not installed"
-        if (($install_params['-Scope'] -eq 'CurrentUser') -And !(IsAdministrator))
+        if (($install_params['-Scope'] -eq 'CurrentUser') -And 
+            !(Test-IsAdministrator))
         {
             Write-Warning "You must run this script elevated to install module $name" 
             continue
@@ -97,15 +100,6 @@ ForEach ($module in $modules.GetEnumerator())
 
 
 ##
-# Add the ability to administer VMWare ESXi hosts
-# $snapinName = "VMware.VimAutomation.Core"
-# Add-PSSnapin $snapinName -ErrorAction SilentlyContinue
-# if ((Get-PSSnapin -Name $snapinName -ErrorAction SilentlyContinue) -eq $null)
-# {
-# 	Write-Warning "VMware SnapIn is not installed and has not been added to this session."
-# }
-
-##
 # Load posh-git module and start the ssh agent
 # https://github.com/dahlbyk/posh-git
 if ((Get-Command "git.exe" -ErrorAction SilentlyContinue) -And 
@@ -115,9 +109,18 @@ if ((Get-Command "git.exe" -ErrorAction SilentlyContinue) -And
     Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
     Import-Module posh-git
     Pop-Location
-    # $env:path += ";" + (Get-Item "Env:ProgramFiles").Value + "\Git\usr\bin"
     Start-SshAgent -Quiet
 }
+
+
+##
+# Configure the PSReadLine command line editing experience
+if (Get-Module 'PSReadLine') {
+    Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+    Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+    Set-PSReadLineKeyHandler -Key Tab -Function Complete
+}
+
 
 ##
 # Configure the prompt
@@ -129,7 +132,7 @@ Function Prompt
     $hostForegroundColor='Cyan'
     $pathForegroundColor='Yellow'
 
-    if (IsAdministrator) 
+    if (Test-IsAdministrator) 
     {
         $userForegroundColor='Red'
         $hostForegroundColor='Red' 
@@ -151,4 +154,5 @@ Function Prompt
 
 ##
 # Change to home directory
-cd ~
+cd ${Env:USERPROFILE}
+
