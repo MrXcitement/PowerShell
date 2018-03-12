@@ -64,7 +64,7 @@ $modules = @{
                                         '-AllowClobber'=$True}}
     # Jump.Location
     # https://github.com/tkellogg/Jump-Location
-    'Jump.Location' = @{'import' = $False
+    'Jump.Location' = @{'import' = $True
                         'import_params' = @{}
                         'install_params' = @{'-Scope'='CurrentUser'}}
     # VMware.PowerClI
