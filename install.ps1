@@ -8,9 +8,18 @@
 # Change log:
 # 2016.06.05
 # * First release.
+# 2018.12.18
+# * The default installation location may change if onedrive is installed.
+#   Change the mklink commands to use the correct $profile variable to create links in the correct folder.
+#
+# $Profile                           Current User,Current Host
+# $Profile.CurrentUserCurrentHost    Current User,Current Host
+# $Profile.CurrentUserAllHosts       Current User,All Hosts
+# $Profile.AllUsersCurrentHost       All Users, Current Host
+# $Profile.AllUsersAllHosts          All Users, All Hosts
 
 md -Force -Path $env:userprofile\Documents\WindowsPowerShell
-cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\profile.ps1 $PSScriptRoot\profile.ps1
-cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1 $PSScriptRoot\Microsoft.PowerShell_profile.ps1
-cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1 $PSScriptRoot\Microsoft.PowerShellISE_profile.ps1
+cmd /c mklink $profile.CurrentUserAllHosts $PSScriptRoot\profile.ps1
+cmd /c mklink $profile $PSScriptRoot\Microsoft.PowerShell_profile.ps1
+cmd /c mklink $profile.Replace('PowerShell_','PowerShellISE_') $PSScriptRoot\Microsoft.PowerShellISE_profile.ps1
 
