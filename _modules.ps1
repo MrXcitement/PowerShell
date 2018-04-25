@@ -29,6 +29,11 @@ $modules = @{
                    'import_params' = @{}
                    'install_params' = @{'-Scope'='CurrentUser'
                                         '-AllowClobber'=$True}}
+    # Jump.Location
+    # https://github.com/tkellogg/Jump-Location
+    'Jump.Location' = @{'import' = $True
+                        'import_params' = @{}
+                        'install_params' = @{'-Scope'='CurrentUser'}}
     # VMware.PowerClI
     # https://blogs.vmware.com/powercli/
     'VMware.PowerCLI' = @{'import'=$False
