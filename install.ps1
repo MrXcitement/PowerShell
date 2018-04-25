@@ -9,8 +9,17 @@
 # 2016.06.05
 # * First release.
 
-md -Force -Path $env:userprofile\Documents\WindowsPowerShell
-cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\profile.ps1 $PSScriptRoot\profile.ps1
-cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1 $PSScriptRoot\Microsoft.PowerShell_profile.ps1
-cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1 $PSScriptRoot\Microsoft.PowerShellISE_profile.ps1
+$files = "_functions.ps1",
+         "_modules.ps1",
+         "_posh-git.ps1",
+         "_prompt.ps1",
+         "_psreadline.ps1",
+         "profile.ps1",
+         "Microsoft.Powershell_profile.ps1",
+         "Microsoft.PowershellISE_profile.ps1"
 
+md -Force -Path $env:userprofile\Documents\WindowsPowerShell
+
+foreach ($file in $files) {
+    cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\$file $PSScriptRoot\$file
+}
