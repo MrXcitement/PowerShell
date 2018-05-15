@@ -22,7 +22,7 @@
 
 
 . $PSScriptRoot\_functions.ps1
-#. $PSScriptRoot\_modules.ps1
+. $PSScriptRoot\_modules.ps1
 . $PSScriptRoot\_posh-git.ps1
 . $PSScriptRoot\_psreadline.ps1
 . $PSScriptRoot\_prompt.ps1
