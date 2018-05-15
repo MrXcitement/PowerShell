@@ -11,5 +11,3 @@ if ((Get-Command "git.exe" -ErrorAction SilentlyContinue) -And
     Start-SshAgent -Quiet
 }
 
-
-
