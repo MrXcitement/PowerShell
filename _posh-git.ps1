@@ -8,6 +8,5 @@ if ((Get-Command "git.exe" -ErrorAction SilentlyContinue) -And
     Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
     Import-Module posh-git
     Pop-Location
-    Start-SshAgent -Quiet
 }
 
