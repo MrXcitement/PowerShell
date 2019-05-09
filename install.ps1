@@ -11,24 +11,20 @@
 # 2018.12.18
 # * The default installation location may change if onedrive is installed.
 #   Change the mklink commands to use the correct $profile variable to create links in the correct folder.
-#
+# 2019.05.09 MRB
+# * Moved files under home/Documents/WindowsPowerShell
+
 # $Profile                           Current User,Current Host
 # $Profile.CurrentUserCurrentHost    Current User,Current Host
 # $Profile.CurrentUserAllHosts       Current User,All Hosts
 # $Profile.AllUsersCurrentHost       All Users, Current Host
 # $Profile.AllUsersAllHosts          All Users, All Hosts
 
-$files = "_functions.ps1",
-         "_modules.ps1",
-         "_posh-git.ps1",
-         "_prompt.ps1",
-         "_psreadline.ps1",
-         "profile.ps1",
-         "Microsoft.Powershell_profile.ps1",
-         "Microsoft.PowershellISE_profile.ps1"
+$files = Get-ChildItem ".\home\Documents\WindowsPowerShell\*.ps1"
 
-md -Force -Path $env:userprofile\Documents\WindowsPowerShell
+mkdir -Force -Path $env:userprofile\Documents\WindowsPowerShell
 
 foreach ($file in $files) {
-    cmd /c mklink $env:userprofile\Documents\WindowsPowerShell\$file $PSScriptRoot\$file
+    $link = $env:userprofile + "\Documents\WindowsPowerShell\" + $file.Name
+    cmd /c mklink $link $file 
 }
