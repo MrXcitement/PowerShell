@@ -20,11 +20,17 @@
 # $Profile.AllUsersCurrentHost       All Users, Current Host
 # $Profile.AllUsersAllHosts          All Users, All Hosts
 
-$files = Get-ChildItem ".\home\Documents\WindowsPowerShell\*.ps1"
 
 mkdir -Force -Path $env:userprofile\Documents\WindowsPowerShell
 
+$files = Get-ChildItem ".\home\Documents\WindowsPowerShell\*.ps1"
 foreach ($file in $files) {
     $link = $env:userprofile + "\Documents\WindowsPowerShell\" + $file.Name
-    cmd /c mklink $link $file 
+    cmd /c mklink $link $file.FullName 
+}
+
+$dirs = Get-ChildItem -Directory ".\home\Documents\WindowsPowerShell\"
+foreach ($dir in $dirs) {
+    $link = $env:userprofile + "\Documents\WindowsPowerShell\" + $dir.Name
+    cmd /c mklink /D $link $dir.FullName 
 }
