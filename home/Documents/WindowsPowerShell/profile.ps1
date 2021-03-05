@@ -23,6 +23,6 @@
 echo "Loading profile.ps1..."
 $scripts = Get-ChildItem "$env:userprofile\Documents\WindowsPowerShell\profile.d\*.ps1"
 foreach ($script in $scripts) {
-    echo "Loading $script..."
+    echo "Loading $($script.Name)..."
     . $script
 }
