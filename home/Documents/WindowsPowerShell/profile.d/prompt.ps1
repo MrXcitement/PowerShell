@@ -1,12 +1,9 @@
 
 ##
 # Configure the prompt
-if (Get-Command "starship.exe" -ErrorAction SilentlyContinue) {
-    Invoke-Expression (&starship init powershell)
-} else {
-    Function Prompt
-    {
-        $realLASTEXITCODE = $LASTEXITCODE
+Function Prompt
+{
+    $realLASTEXITCODE = $LASTEXITCODE
 
         $userForegroundColor='Cyan'
         $hostForegroundColor='Cyan'
@@ -17,7 +14,7 @@ if (Get-Command "starship.exe" -ErrorAction SilentlyContinue) {
             $userForegroundColor='Red'
                 $hostForegroundColor='Red' 
         }
-        Write-Host($env:USERNAME) -noNewLine -ForegroundColor $userForegroundColor
+    Write-Host($env:USERNAME) -noNewLine -ForegroundColor $userForegroundColor
         Write-Host("@") -noNewLine -ForegroundColor White
         Write-Host($env:COMPUTERNAME) -noNewLine -ForegroundColor $hostForegroundColor
         Write-Host(" in ") -nonewline -ForegroundColor White
@@ -27,8 +24,7 @@ if (Get-Command "starship.exe" -ErrorAction SilentlyContinue) {
         { 
             Write-VcsStatus 
         }
-        Write-Host("")
+    Write-Host("")
         $global:LASTEXITCODE = $realLASTEXITCODE
         return "> "
-    }
 }
