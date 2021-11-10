@@ -1,36 +1,62 @@
-# install.cmd -- Install the PowerShell profile files
-# Use powershell to run a process elevated and then use mklink to create
-# a symlink to the profile files
+# install.ps1 -- Install the git config files
 
 # Mike Barker <mike@thebarkers.com>
-# June 5th, 2016
+# November 10th, 2021
 
-# Change log:
-# 2016.06.05
-# * First release.
-# 2018.12.18
-# * The default installation location may change if onedrive is installed.
-#   Change the mklink commands to use the correct $profile variable to create links in the correct folder.
-# 2019.05.09 MRB
-# * Moved files under home/Documents/WindowsPowerShell
+# Install-Item - Install a file/folder to the user's home folder
+Function Install-Item([string]$source, [string]$target) {
 
-# $Profile                           Current User,Current Host
-# $Profile.CurrentUserCurrentHost    Current User,Current Host
-# $Profile.CurrentUserAllHosts       Current User,All Hosts
-# $Profile.AllUsersCurrentHost       All Users, Current Host
-# $Profile.AllUsersAllHosts          All Users, All Hosts
+    # Backup the source file/folder, if it exists and is not a link
+    if ((Test-Path $source) -And (-Not (Test-SymbolicLink $source))) {
+        # backup the file/folder
+        Write-Warning "Backup $($source) $($source).backup"
+        Move-Item -Path $source -Destination "$($source).backup"
+    }
 
-
-mkdir -Force -Path $env:userprofile\Documents\WindowsPowerShell
-
-$files = Get-ChildItem ".\home\Documents\WindowsPowerShell\*.ps1"
-foreach ($file in $files) {
-    $link = $env:userprofile + "\Documents\WindowsPowerShell\" + $file.Name
-    cmd /c mklink $link $file.FullName 
+    # Create a symlink to the target file/folder, if it does not exist
+    if (-Not (Test-Path $source)) {
+        Write-Output "Linking: $($source) to $($target)"
+        New-SymbolicLink $source $target | Out-Null
+    }
 }
 
-$dirs = Get-ChildItem -Directory ".\home\Documents\WindowsPowerShell\"
-foreach ($dir in $dirs) {
-    $link = $env:userprofile + "\Documents\WindowsPowerShell\" + $dir.Name
-    cmd /c mklink /D $link $dir.FullName 
+# New-SymbolicLink - Create a new symbolic link file
+Function New-SymbolicLink([string]$link, [string]$target) {
+    New-Item -ItemType SymbolicLink -Path $link -Value $target -Force
+}
+
+# Test-Elevated - Test if the current powershell session is being run with elevated permisions
+Function Test-Elevated() {
+    return [Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544'
+}
+
+# Test-SymbolicLink - Test if the path is a symbolic link file
+Function Test-SymbolicLink([string]$path) {
+    $file = Get-Item $path -Force -ea SilentlyContinue
+    Return [bool]($file.LinkType -eq "SymbolicLink")
+}
+
+# Verify the script is being run with elevated permisions
+if (-Not (Test-Elevated)) {
+    throw "This script must be run 'Elevated' as an Administrator"
+}
+
+# The full path to the CurrentUserCurrentHost profile files.
+$profile_root = Split-Path -Parent -Path $PROFILE.CurrentUserCurrentHost
+
+# The name of the folder that holds the profile files
+$profile_dir = Split-Path -Leaf -Path $profile_root
+
+# Create the profile dir if it does not allready exist
+New-Item -Type Directory -ErrorAction Ignore -Path "$profile_root"
+
+# Get the files and folders in this repositories profile directory
+$items = Get-ChildItem ".\home\$profile_dir\*.ps1"
+$items += Get-ChildItem -Directory ".\home\$profile_dir\"
+
+# Install the files and folders to the profile root
+foreach ($file in $items) {
+    $link = "$profile_root\$($file.Name)"
+    $source = $file.FullName
+    Install-Item $link $source
 }
