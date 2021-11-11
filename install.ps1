@@ -36,8 +36,8 @@ Function Test-SymbolicLink([string]$path) {
     Return [bool]($file.LinkType -eq "SymbolicLink")
 }
 
-# Verify the script is being run with elevated permisions
-if (-Not (Test-Elevated)) {
+# Verify the script is being run with elevated permisions on Windows
+if (($PSVersionTable.Platform -EQ "Windows" ) -And (-Not (Test-Elevated))) {
     throw "This script must be run 'Elevated' as an Administrator"
 }
 
@@ -51,8 +51,8 @@ $profile_dir = Split-Path -Leaf -Path $profile_root
 New-Item -Type Directory -ErrorAction Ignore -Path "$profile_root"
 
 # Get the files and folders in this repositories profile directory
-$items = Get-ChildItem ".\home\$profile_dir\*.ps1"
-$items += Get-ChildItem -Directory ".\home\$profile_dir\"
+$items = Get-ChildItem "$PSScriptRoot\home\$profile_dir\*.ps1"
+$items += Get-ChildItem -Directory "$PSScriptRoot\home\$profile_dir\"
 
 # Install the files and folders to the profile root
 foreach ($file in $items) {
