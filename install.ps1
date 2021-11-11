@@ -47,7 +47,7 @@ Function Test-SymbolicLink([string]$path) {
 # IsWindows variable is not defined in Windows Powershell 5.x, 
 # so define a local variable and set it to True
 if (-Not (Get-Variable IsWindows -Scope Global -ErrorAction SilentlyContinue )) {
-    $IsWindows = True
+    $IsWindows = $true
 }
 
 # Verify the script is being run with elevated permisions on Windows
