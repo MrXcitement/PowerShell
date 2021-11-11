@@ -21,7 +21,7 @@
 # Microsoft.PowerShellISE_profile.ps1
 
 echo "Loading profile.ps1..."
-$scripts = Get-ChildItem "$env:userprofile\Documents\WindowsPowerShell\profile.d\*.ps1"
+$scripts = Get-Item "$PSScriptRoot\profile.d\*.ps1"
 foreach ($script in $scripts) {
     echo "Loading $($script.Name)..."
     . $script
