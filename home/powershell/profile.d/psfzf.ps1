@@ -7,7 +7,7 @@ if (Get-Module -ListAvailable 'PSFzf') {
     Import-Module 'PSFzf'
     Set-PsFzfOption -TabExpansion
     Set-PsFzfOption -EnableAliasFuzzyEdit
-    Set-PsFzfOption -EnableAliasFuzzyGitLocation
+    Set-PsFzfOption -EnableAliasFuzzyGitStatus
     Set-PsFzfOption -EnableAliasFuzzyHistory
     Set-PsFzfOption -EnableAliasFuzzyKillProcess
     Set-PsFzfOption -EnableAliasFuzzySetLocation
