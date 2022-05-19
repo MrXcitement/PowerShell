@@ -3,7 +3,9 @@
 # Mike Barker <mike@thebarkers.com>
 # April 1, 2022
 
-if (Get-Module -ListAvailable 'PSFzf') {
+# If the fzf executable and PSFzf module are available, init the PSFzf module.
+if ((Get-Command fzf -ErrorAction SilentlyContinue) -And 
+    (Get-Module -ListAvailable 'PSFzf')) {
     Import-Module 'PSFzf'
     Set-PsFzfOption -TabExpansion
     Set-PsFzfOption -EnableAliasFuzzyEdit
