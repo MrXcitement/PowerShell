@@ -20,6 +20,22 @@
 # Default ISE powershell profile.
 # Microsoft.PowerShellISE_profile.ps1
 
+function Assert-IsNonInteractiveShell {
+    # Test each Arg for match of abbreviated '-NonInteractive' command.
+    $NonInteractive = [Environment]::GetCommandLineArgs() | Where-Object{ $_ -like '-NonI*' }
+
+    if ([Environment]::UserInteractive -and -not $NonInteractive) {
+        # We are in an interactive shell.
+        return $false
+    }
+
+    return $true
+}
+
+if (Assert-IsNonInteractiveShell) {
+    exit 0
+}
+
 echo "Loading profile.ps1..."
 $scripts = Get-Item "$PSScriptRoot\profile.d\*.ps1"
 foreach ($script in $scripts) {
