@@ -1,9 +1,19 @@
-# path.ps1 --- Adjust the path to include additional folders
-# Mike Barker <mike@thebarkers.com>
-# June 30th, 2022
+##
+# Useful functions
+
+Function Test-Administrator() {
+    if ($IsWindows) {
+        $user = [Security.Principal.WindowsIdentity]::GetCurrent();
+        $user_principal = New-Object Security.Principal.WindowsPrincipal $user
+        $role_admin = [Security.Principal.WindowsBuiltinRole]::Administrator
+        return $user_principal.IsInRole($role_admin)
+    } else {
+        return ((id -u) -eq 0)
+    }
+}
 
 # Get the path variable
-Function Get-Pathvariable {
+Function Get-PathVariable {
     $env:Path -split ';'
 }
 
