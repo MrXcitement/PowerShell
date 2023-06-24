@@ -1,6 +1,11 @@
 ##
 # Useful functions
 
+# IsWindows variable is not defined in Windows Powershell 5.x,
+# so define a local variable and set it to True
+if (-Not (Get-Variable IsWindows -Scope Global -ErrorAction SilentlyContinue )) {
+    $IsWindows = $true
+}
 Function Test-Administrator() {
     if ($IsWindows) {
         $user = [Security.Principal.WindowsIdentity]::GetCurrent();
@@ -31,7 +36,7 @@ Function Set-PathVariable {
     if ($PSBoundParameters.Keys -contains 'RemovePath'){
         $regexPaths += [regex]::Escape($RemovePath)
     }
-    
+
     $arrPath = $env:Path -split ';'
     foreach ($path in $regexPaths) {
         $arrPath = $arrPath | Where-Object {$_ -notMatch "^$path\\?"}
