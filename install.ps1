@@ -44,7 +44,7 @@ Function Test-SymbolicLink([string]$path) {
     Return [bool]($file.LinkType -eq "SymbolicLink")
 }
 
-# IsWindows variable is not defined in Windows Powershell 5.x, 
+# IsWindows variable is not defined in Windows Powershell 5.x,
 # so define a local variable and set it to True
 if (-Not (Get-Variable IsWindows -Scope Global -ErrorAction SilentlyContinue )) {
     $IsWindows = $true
@@ -56,21 +56,22 @@ if (($IsWindows) -And (-Not (Test-Elevated))) {
 }
 
 # The full path to the CurrentUserCurrentHost profile files.
-$profile_root = Split-Path -Parent -Path $PROFILE.CurrentUserCurrentHost
+$target_path = Split-Path -Parent -Path $PROFILE.CurrentUserAllHosts
 
 # The name of the folder that holds the profile files
-$profile_dir = Split-Path -Leaf -Path $profile_root
+#$profile_dir = Split-Path -Leaf -Path $target_path
+$source_path = "$PSScriptRoot\home\powershell"
 
 # Create the profile dir if it does not allready exist
-New-Item -Type Directory -ErrorAction Ignore -Path "$profile_root"
+New-Item -Type Directory -ErrorAction Ignore -Path "$target_path"
 
 # Get the files and folders in this repositories profile directory
-$items = Get-ChildItem "$PSScriptRoot\home\$profile_dir\*.ps1"
-$items += Get-ChildItem -Directory "$PSScriptRoot\home\$profile_dir\"
+$items = Get-ChildItem "$source_path\*.ps1"
+$items += Get-ChildItem -Directory "$source_path\"
 
 # Install the files and folders to the profile root
 foreach ($file in $items) {
-    $link = "$profile_root\$($file.Name)"
+    $link = "$target_path\$($file.Name)"
     $source = $file.FullName
     Install-Item $link $source
 }

@@ -4,6 +4,9 @@
 if ((Get-Command "git" -ErrorAction SilentlyContinue) -And
     (Get-Module -ListAvailable -Name "Posh-Git"))
 {
-    Import-Module Posh-Git
+    Write-Output "Import module posh-git"
+    Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
+    Import-Module posh-git
+    Pop-Location
 }
 
