@@ -20,25 +20,33 @@
 # Default ISE powershell profile.
 # Microsoft.PowerShellISE_profile.ps1
 
-function Assert-IsNonInteractiveShell {
-    # Test each Arg for match of abbreviated '-NonInteractive' command.
-    $NonInteractive = [Environment]::GetCommandLineArgs() | Where-Object{ $_ -like '-NonI*' }
+function Assert-IsInteractiveShell {
 
-    if ([Environment]::UserInteractive -and -not $NonInteractive) {
-        # We are in an interactive shell.
-        return $false
+    $commandline_args = [Environment]::GetCommandLineArgs()
+
+    # A list of command line args that indicate an interactive session
+    $interactive_args = '-login', '-l', '-noexit', '-noe'
+
+    # If any of the interactive args are found, return true
+    if ($commandline_args | Where-Object -FilterScript {$PSItem -in $interactive_args}) {
+        return $True
     }
 
-    return $true
+    # A list of command line args that indicate a non interactive session
+    $non_interactive_args = '-command', '-c', '-encodedcommand', '-e', '-ec', '-file', '-f', '-noni', '-noninteractive'
+
+    # If any of the non interactive args are found, return false, otherwise true
+    return -not ($commandline_args | Where-Object -FilterScript {$PSItem -in $non_interactive_args})
 }
 
-if (Assert-IsNonInteractiveShell) {
-    exit 0
+if (-not (Assert-IsInteractiveShell)) {
+    exit
 }
-echo "Loading profile.ps1..."
+
+Write-Host "Loading profile.ps1..."
 $scripts = Get-Item "$PSScriptRoot\profile.d\*.ps1"
 foreach ($script in $scripts) {
-    echo "Loading $($script.Name)..."
+    Write-Host "Loading $($script.Name)..."
     . $script
 }
 
