@@ -10,10 +10,10 @@ if (Get-Module 'PSReadLine') {
     }
     Set-PSReadLineOption -HistorySearchCursorMovesToEnd
     # See: https://github.com/microsoft/terminal/issues/15452
-    Set-PSReadLineOption -Colors @{
-        ContinuationPrompt = "`e[39m"
-        Default = "`e[39m"
-        Type = "`e[39m"
-    }
+    # Set-PSReadLineOption -Colors @{
+    #     ContinuationPrompt = "`e[39m"
+    #     Default = "`e[39m"
+    #     Type = "`e[39m"
+    # }
 }
 
