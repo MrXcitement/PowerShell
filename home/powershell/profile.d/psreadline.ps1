@@ -9,11 +9,14 @@ if (Get-Module 'PSReadLine') {
         Set-PSReadLineKeyHandler -Key Tab -Function Complete
     }
     Set-PSReadLineOption -HistorySearchCursorMovesToEnd
-    # See: https://github.com/microsoft/terminal/issues/15452
-    Set-PSReadLineOption -Colors @{
-        ContinuationPrompt = "`e[39m"
-        Default = "`e[39m"
-        Type = "`e[39m"
+    # Only set the PSReadlineOption colors if not running in Powershell ISE
+    if ((Get-Host).Name -NotLike "* ISE *") {
+        # See: https://github.com/microsoft/terminal/issues/15452
+        Set-PSReadLineOption -Colors @{
+            ContinuationPrompt = "`e[39m"
+            Default = "`e[39m"
+            Type = "`e[39m"
+        }
     }
 }
 
