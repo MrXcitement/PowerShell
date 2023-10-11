@@ -1,6 +1,17 @@
 ##
 # Configure the prompt
 
+# If the host is Powershell ISE, just exit
+if ((Get-Host).Name -like "* ISE *") {
+    Exit
+}
+
+# If the starship prompt utility is installed, use it
+if (Get-Command starship -ErrorAction Ignore) {
+    Invoke-Expression (&starship init powershell)
+    Exit
+}
+
 Function Prompt
 {
     $realLASTEXITCODE = $LASTEXITCODE
@@ -72,7 +83,3 @@ Function Prompt
 #     return "$('>' * ($nestedPromptLevel + 1)) "
 # }
 
-# If the starship prompt utility is installed, use it
-if (Get-Command starship -ErrorAction Ignore) {
-    Invoke-Expression (&starship init powershell)
-}
