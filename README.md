@@ -1,4 +1,8 @@
 # PowerShell Profile (Both console and ISE versions)
+## Archived on 3/16/2024
+I have migrated this configuration into my chezmoi [dotfiles](https://github.com/mrxcitement/dotfiles) repository.
+<hr>
+
 This repository tracks my personal PowerShell profile files.
 
 ## Install
